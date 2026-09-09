@@ -11,14 +11,13 @@ from the resulting analysis table.
 
 ## Findings
 
-**1. Budget buys scale, not efficiency.**
+**1. Return multiple is U-shaped by budget; the middle is the weak position.**
 
-Production budget is the single strongest predictor in both models: a one-log-unit
-increase is associated with roughly +55% audience volume and +122% worldwide
-revenue, holding genre, rating, era, and critic score constant. But efficiency runs
-the other way. Titles under $5M return a median 2.4x; titles over $100M return
-2.0x while carrying twenty times the downside. Spending more reliably produces a
-bigger title. It does not produce a better-performing one per dollar.
+Median return is 2.50x under $5M, falls to 1.51x in the $20-50M band, then climbs back to 2.51x above $100M. Mid-budget titles are the worst position in the catalogue: expensive enough to lose real money, not big enough to command the release that justifies the spend.
+
+The two ends get there differently. Micro-budget titles hit 2.50x on a 65% hit rate — high variance, carried by a minority of breakouts. Tentpoles hit 2.51x on an 87% hit rate, the highest in the catalogue. Same efficiency, opposite risk profiles: one is a portfolio bet, the other is a reliable return on a large commitment.
+
+Budget is still the strongest predictor of scale in both models — a one-log-unit increase is associated with roughly +55% audience volume and +122% worldwide revenue, holding genre, rating, era, and critic score constant. It just doesn't move efficiency monotonically.
 
 **2. Horror is the standout acquisition category.**
 
