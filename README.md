@@ -41,8 +41,7 @@ Documentary shows a 144x *average* return and a 2.2x *median*. A handful of
 micro-budget titles with outsized returns pull the mean up by two orders of
 magnitude. Horror shows the same pattern less severely: 69.6x mean, 2.63x median.
 Any ranking built on average return in this catalogue is ranking outlier exposure,
-not performance. The SQL in `sql/content_kpis.sql` uses median throughout for this
-reason. The budget tiers show it too: micro-budget titles average 45.9x and return a median 2.50x. The mean is describing a handful of breakouts, not the tier.
+not performance. The genre and budget-tier queries in sql/content_kpis.sql use median for this reason. The budget tiers show it too: micro-budget titles average 45.9x and return a median 2.50x. The mean is describing a handful of breakouts, not the tier.
 
 **5. Attributes explain part of the picture, not most of it.**
 
