@@ -55,20 +55,46 @@ def genre_scorecard(conn) -> pd.DataFrame:
 
 
 def budget_tiers(conn) -> pd.DataFrame:
+    """Median return by tier, not mean — see finding 4 in the README.
+
+    The mean puts micro-budget titles at 45.9x on the strength of a handful
+    of breakouts, which inverts the actual pattern.
+    """
     return q(conn, """
-        SELECT CASE
-                 WHEN production_budget <   5000000 THEN 'Under $5M'
-                 WHEN production_budget <  20000000 THEN '$5-20M'
-                 WHEN production_budget <  50000000 THEN '$20-50M'
-                 WHEN production_budget < 100000000 THEN '$50-100M'
-                 ELSE '$100M+'
-               END                                  AS tier,
-               COUNT(*)                             AS titles,
-               AVG(return_multiple)                 AS avg_return,
-               100.0 * AVG(profitable)              AS pct_profitable
-        FROM content
-        WHERE return_multiple IS NOT NULL
-        GROUP BY tier
+        WITH tiered AS (
+            SELECT CASE
+                     WHEN production_budget <   5000000 THEN 'Under $5M'
+                     WHEN production_budget <  20000000 THEN '$5-20M'
+                     WHEN production_budget <  50000000 THEN '$20-50M'
+                     WHEN production_budget < 100000000 THEN '$50-100M'
+                     ELSE '$100M+'
+                   END              AS tier,
+                   return_multiple,
+                   profitable
+            FROM content
+            WHERE return_multiple IS NOT NULL
+        ),
+        ranked AS (
+            SELECT tier, return_multiple,
+                   ROW_NUMBER() OVER (PARTITION BY tier
+                                      ORDER BY return_multiple) AS rn,
+                   COUNT(*)    OVER (PARTITION BY tier)          AS n
+            FROM tiered
+        ),
+        med AS (
+            SELECT tier, AVG(return_multiple) AS median_return
+            FROM ranked
+            WHERE rn IN ((n + 1) / 2, (n + 2) / 2)
+            GROUP BY tier
+        )
+        SELECT t.tier,
+               COUNT(*)                        AS titles,
+               m.median_return                 AS median_return,
+               AVG(t.return_multiple)          AS mean_return,
+               100.0 * AVG(t.profitable)       AS pct_profitable
+        FROM tiered t
+        JOIN med m ON m.tier = t.tier
+        GROUP BY t.tier, m.median_return
     """)
 
 
@@ -107,9 +133,15 @@ def plot_budget_tiers(df: pd.DataFrame) -> None:
     order = ["Under $5M", "$5-20M", "$20-50M", "$50-100M", "$100M+"]
     d = df.set_index("tier").reindex(order).reset_index()
     fig, (a1, a2) = plt.subplots(1, 2, figsize=(8, 3.4))
-    a1.bar(d["tier"], d["avg_return"], color=ACCENT)
-    a1.set_title("Average return multiple", fontweight="bold", loc="left")
+    a1.bar(d["tier"], d["median_return"], color=ACCENT)
+    a1.set_title("Median return multiple", fontweight="bold", loc="left")
     a1.tick_params(axis="x", rotation=35)
+    a1.set_ylim(0, d["median_return"].max() * 1.35)
+    for x, (med, mean) in enumerate(zip(d["median_return"], d["mean_return"])):
+        a1.text(x, med + 0.06, f"{med:.2f}x", ha="center", fontsize=7.5,
+                color="#2D3748")
+        a1.text(x, med + 0.26, f"mean {mean:.1f}x", ha="center", fontsize=6.5,
+                color="#A0AEC0")
     a2.bar(d["tier"], d["pct_profitable"], color=MUTED)
     a2.set_title("% of titles profitable", fontweight="bold", loc="left")
     a2.tick_params(axis="x", rotation=35)
