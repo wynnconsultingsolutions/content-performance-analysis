@@ -79,8 +79,7 @@ END
 - **Rows:** `Median Return`, then `Hit Rate` as a second row → creates a dual view
 - **Marks:** Bar
 
-Title it **Bigger budgets, smaller multiples**. That is the finding; say it in the
-title rather than making the reader derive it.
+Title it The mid-budget squeeze. That is the finding; say it in the title rather than making the reader derive it. Note this is the reverse of what the mean suggests — median return is U-shaped, with the $20-50M band weakest at 1.51x while both micro-budget and tentpole clear 2.50x. See finding #1.
 
 ## Sheet 3 — Critic vs audience divergence
 
